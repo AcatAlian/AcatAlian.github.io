@@ -6,9 +6,9 @@
     <title>AcatAlian | Portfolio</title>
     <style>
         body {
-            background-color: #0b0713;
-            color: #e2daeb;
-            font-family: 'Courier New', Courier, monospace;
+            background-color: #0f1115;
+            color: #f1f3f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,61 +16,66 @@
             margin: 0;
             padding: 20px;
         }
-        .container {
-            background-color: #150f22;
-            border: 2px solid #8a2be2;
-            border-radius: 12px;
-            box-shadow: 0 0 20px #8a2be2;
-            max-width: 600px;
+        .portfolio-card {
+            background-color: #1a1d24;
+            border-left: 4px solid #00f2fe;
+            border-radius: 8px;
+            max-width: 500px;
             width: 100%;
-            padding: 30px;
+            padding: 40px;
             box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         h1 {
-            color: #da70d6;
-            margin-top: 0;
-            text-shadow: 0 0 8px #da70d6;
+            font-size: 2.2rem;
+            margin: 0 0 30px 0;
+            letter-spacing: -0.5px;
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         h2 {
-            color: #ba55d3;
-            border-bottom: 1px dashed #8a2be2;
-            padding-bottom: 5px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #a0aec0;
+            margin: 0 0 20px 0;
         }
-        .role {
-            font-weight: bold;
-            color: #00ffff;
+        .project-item {
+            margin-bottom: 25px;
         }
-        ul {
-            padding-left: 20px;
-            line-height: 1.6;
+        .project-item:last-child {
+            margin-bottom: 0;
         }
-        li {
-            margin-bottom: 8px;
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 0 0 4px 0;
+        }
+        .project-role {
+            font-size: 0.9rem;
+            color: #00f2fe;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>AcatAlian</h1>
-    <p>Welcome to my little corner of the internet.</p>
-    
-    <h2>About Me</h2>
-    <p>I am an experienced game tester, community moderator, and event host.</p>
-    
-    <h2>Experience</h2>
-    
-    <p><span class="role">Be an Anomaly or Guard</span><br><em>Tester, Moderator & Event Host</em></p>
-    <ul>
-        <li>Enforced community guidelines, moderated chats, and resolved player disputes.</li>
-        <li>Organized, managed, and hosted interactive community-wide events.</li>
-        <li>Tested gameplay mechanics, identified glitches, and provided feedback to developers.</li>
-    </ul>
 
-    <p><span class="role">Push Out!</span><br><em>Game Tester</em></p>
-    <ul>
-        <li>Participated in QA testing phases to identify core gameplay bugs and balance issues.</li>
-        <li>Documented replication steps for glitches to help the development team streamline fixes.</li>
-    </ul>
+<div class="portfolio-card">
+    <h1>AcatAlian</h1>
+    
+    <h2>Projects & Experience</h2>
+    
+    <div class="project-item">
+        <div class="project-title">Be an Anomaly or Guard</div>
+        <div class="project-role">Tester, Moderator & Event Host</div>
+    </div>
+
+    <div class="project-item">
+        <div class="project-title">Push Out!</div>
+        <div class="project-role">Game Tester</div>
+    </div>
 </div>
 
 </body>
