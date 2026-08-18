@@ -435,7 +435,17 @@
     const iconOff = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line>';
 
     audio.volume = volumeSlider.value / 100;
-    audio.muted = true; // most browsers block sound until the user interacts, so start muted
+
+    // Try real autoplay with sound first. Browsers allow this for some
+    // visitors (repeat visits, granted permissions, etc). If it's blocked,
+    // fall back to muted + wait for a click, instead of assuming it'll fail.
+    audio.play().then(() => {
+      audio.muted = false;
+      speakerIcon.innerHTML = iconOn;
+    }).catch(() => {
+      audio.muted = true;
+      speakerIcon.innerHTML = iconOff;
+    });
 
     muteBtn.addEventListener('click', () => {
       audio.muted = !audio.muted;
