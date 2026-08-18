@@ -103,6 +103,26 @@
     cursor: pointer;
   }
 
+  .audio-hint {
+    position: absolute;
+    top: 8px;
+    left: 48px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 5px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+    animation: hintPulse 1.6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes hintPulse {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 1; }
+  }
+
   /* ---------- card ---------- */
   .card {
     position: relative;
@@ -332,6 +352,7 @@
       <svg id="speakerIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
     </button>
     <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="60" orient="vertical" aria-label="Volume">
+    <span class="audio-hint" id="audioHint">tap for sound</span>
   </div>
   <audio id="bgAudio" loop>
     <source src="song.mp3" type="audio/mpeg">
@@ -431,6 +452,8 @@
     const muteBtn = document.getElementById('muteBtn');
     const speakerIcon = document.getElementById('speakerIcon');
     const volumeSlider = document.getElementById('volumeSlider');
+    const audioHint = document.getElementById('audioHint');
+    const hideHint = () => { if (audioHint) audioHint.style.display = 'none'; };
     const iconOn = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.5 8.5a5 5 0 0 1 0 7"></path>';
     const iconOff = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line>';
 
@@ -442,12 +465,27 @@
     audio.play().then(() => {
       audio.muted = false;
       speakerIcon.innerHTML = iconOn;
+      hideHint();
     }).catch(() => {
       audio.muted = true;
       speakerIcon.innerHTML = iconOff;
+      // Fallback: unlock audio on the very first click anywhere on the
+      // page — not just the speaker button — since any real click counts
+      // as a valid user gesture to browsers.
+      document.addEventListener('click', unlockAudio, { once: true });
     });
 
+    function unlockAudio() {
+      hideHint();
+      if (audio.muted) {
+        audio.muted = false;
+        speakerIcon.innerHTML = iconOn;
+        audio.play().catch(() => {});
+      }
+    }
+
     muteBtn.addEventListener('click', () => {
+      hideHint();
       audio.muted = !audio.muted;
       speakerIcon.innerHTML = audio.muted ? iconOff : iconOn;
       if (!audio.muted) {
@@ -456,6 +494,7 @@
     });
 
     volumeSlider.addEventListener('input', () => {
+      hideHint();
       audio.volume = volumeSlider.value / 100;
       if (audio.volume === 0) {
         audio.muted = true;
