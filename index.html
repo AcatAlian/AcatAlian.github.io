@@ -45,6 +45,16 @@
   }
 
   /* ---------- ambient background ---------- */
+  .bg-image {
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    background-image: url('background.gif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
   .bg-grid {
     position: fixed;
     inset: 0;
@@ -348,6 +358,14 @@
     height: 60%;
     object-fit: contain;
     display: block;
+    /* logos are solid black — invert so they show up as light shapes
+       against the dark circle instead of disappearing into it */
+    filter: invert(1) brightness(1.15);
+  }
+
+  .icon-btn img.icon-discord {
+    width: 50%;
+    height: 50%;
   }
 
   .icon-btn:hover {
@@ -404,6 +422,7 @@
 </head>
 <body>
 
+  <div class="bg-image"></div>
   <div class="bg-grid"></div>
   <div class="bg-glow"></div>
   <div class="led-border"></div>
@@ -471,7 +490,7 @@
         <img src="youtube.png" alt="YouTube">
       </a>
       <a class="icon-btn" href="https://discord.gg/Cjc5QGhbFu" target="_blank" rel="noopener" title="Discord">
-        <img src="discord.png" alt="Discord">
+        <img src="discord.png" alt="Discord" class="icon-discord">
       </a>
       <a class="icon-btn" href="https://www.roblox.com/users/1824718468/profile" target="_blank" rel="noopener" title="Roblox">
         <img src="roblox.png" alt="Roblox">
