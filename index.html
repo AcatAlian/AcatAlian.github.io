@@ -199,7 +199,7 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: nameShine 4s linear infinite;
+    animation: nameShine 2.2s linear infinite;
   }
 
   @keyframes nameShine {
@@ -302,14 +302,21 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: var(--text-muted);
     cursor: url('Link.cur'), pointer;
-    transition: all .2s;
+    transition: background .2s, border-color .2s, color .2s, transform .2s, box-shadow .2s;
+    animation: iconGlowBreathe 2.5s ease-in-out infinite;
   }
   .icon-btn:hover {
     color: var(--bg);
     background: var(--accent);
     border-color: var(--accent);
-    box-shadow: 0 0 14px var(--accent-glow);
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.85);
     transform: translateY(-2px);
+    animation: none;
+  }
+
+  @keyframes iconGlowBreathe {
+    0%, 100% { box-shadow: 0 0 5px rgba(34, 197, 94, 0.3); }
+    50% { box-shadow: 0 0 16px rgba(34, 197, 94, 0.85); }
   }
   .icon-btn svg { width: 17px; height: 17px; }
 
