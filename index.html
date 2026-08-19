@@ -41,6 +41,7 @@
     padding: 60px 20px 40px;
     position: relative;
     overflow-x: hidden;
+    cursor: url('Normal.cur'), auto;
   }
 
   /* ---------- ambient background ---------- */
@@ -87,7 +88,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    cursor: url('Link.cur'), pointer;
     transition: color .2s, border-color .2s;
   }
   .speaker-btn:hover { color: var(--accent); border-color: var(--accent); }
@@ -100,7 +101,7 @@
     height: 90px;
     accent-color: var(--accent);
     background: transparent;
-    cursor: pointer;
+    cursor: url('Link.cur'), pointer;
   }
 
   .audio-hint {
@@ -215,7 +216,6 @@
 
   .alias-word {
     text-transform: uppercase;
-    cursor: default;
   }
   .alias-word:hover {
     text-transform: none;
@@ -262,7 +262,7 @@
   .project-card:hover { transform: translateY(-2px); border-color: rgba(0, 242, 254, 0.6); }
   .project-card h3 { margin: 0 0 4px; font-size: 0.95rem; font-family: var(--font-display); }
   .project-card p { margin: 0 0 8px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
-  .project-card a { font-size: 0.8rem; color: var(--accent); text-decoration: none; font-weight: 600; }
+  .project-card a { font-size: 0.8rem; color: var(--accent); text-decoration: none; font-weight: 600; cursor: url('Link.cur'), pointer; }
   .project-card a:hover { text-decoration: underline; }
 
   .donate-text { line-height: 1.7; font-size: 0.92rem; color: var(--text-muted); margin: 0 0 18px; }
@@ -277,6 +277,7 @@
     font-size: 0.9rem;
     text-decoration: none;
     box-shadow: 0 0 16px var(--accent-glow);
+    cursor: url('Link.cur'), pointer;
   }
 
   /* ---------- icon links ---------- */
@@ -300,6 +301,7 @@
     background: var(--card-bg-soft);
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: var(--text-muted);
+    cursor: url('Link.cur'), pointer;
     transition: all .2s;
   }
   .icon-btn:hover {
@@ -329,7 +331,7 @@
     font-family: var(--font-body);
     font-size: 0.82rem;
     letter-spacing: 0.03em;
-    cursor: pointer;
+    cursor: url('Link.cur'), pointer;
     transition: all .2s;
   }
   .tab-btn:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.25); }
