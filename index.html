@@ -171,6 +171,67 @@
     50% { opacity: 1; }
   }
 
+  /* ---------- like button (top-right, mirrors audio-control) ---------- */
+  .like-control {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+  }
+
+  .like-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: url('Link.cur'), pointer;
+    transition: color .2s, border-color .2s, transform .15s;
+  }
+  .like-btn svg { width: 17px; height: 17px; }
+  .like-btn:hover { color: #f23f43; border-color: #f23f43; }
+  .like-btn.liked { color: #f23f43; border-color: #f23f43; animation: likePop .35s ease; }
+  .like-btn.liked svg { fill: #f23f43; }
+  .like-btn:disabled { cursor: url('Normal.cur'), default; }
+
+  @keyframes likePop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+
+  .like-count {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- cursor trail ---------- */
+  .cursor-trail-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+    pointer-events: none;
+    z-index: 997;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.75;
+    transition: opacity .5s ease, transform .5s ease;
+    will-change: transform, opacity;
+  }
+
   /* ---------- card ---------- */
   .card {
     position: relative;
@@ -211,6 +272,34 @@
     display: block;
     background: var(--card-bg-soft);
   }
+
+  /* ---------- avatar status badge (own design, not a Discord copy) ---------- */
+  .avatar-status {
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-status::after {
+    content: "";
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #80848e;
+    transition: background .3s, box-shadow .3s;
+  }
+
+  .avatar-status.online::after  { background: #23a55a; box-shadow: 0 0 7px #23a55a; }
+  .avatar-status.idle::after    { background: #f0b232; box-shadow: 0 0 7px #f0b232; }
+  .avatar-status.dnd::after     { background: #f23f43; box-shadow: 0 0 7px #f23f43; }
+  .avatar-status.offline::after { background: #80848e; }
 
   .view-counter {
     display: flex;
@@ -279,6 +368,145 @@
   .spotify-info .spotify-song { color: var(--text); font-weight: 600; }
   .spotify-info .spotify-artist { color: var(--text-muted); }
 
+  /* ---------- discord activity status (games/apps, via Lanyard) ---------- */
+  .activity-status {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: var(--card-bg-soft);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 8px 10px;
+    margin: 0 0 18px;
+  }
+
+  .activity-status img {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--card-bg);
+  }
+
+  .activity-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-size: 0.78rem;
+  }
+  .activity-info span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .activity-info .activity-name { color: var(--text); font-weight: 600; }
+  .activity-info .activity-detail { color: var(--text-muted); }
+
+  /* ---------- copy chips (Discord tag / Roblox username) ---------- */
+  .id-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 16px;
+  }
+
+  .copy-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--card-bg-soft);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.75rem;
+    padding: 6px 10px;
+    border-radius: 20px;
+    cursor: url('Link.cur'), pointer;
+    transition: border-color .2s, color .2s, box-shadow .2s;
+  }
+  .copy-chip:hover {
+    color: var(--text);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+  .copy-chip kbd {
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ---------- discord server counts (near icon row) ---------- */
+  .card-footer {
+    width: calc(100% - 56px);
+    margin: 18px 0 24px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .server-widget {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    background: var(--card-bg-soft);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 8px 12px;
+    width: 100%;
+    cursor: url('Link.cur'), pointer;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .server-widget:hover {
+    border-color: rgba(34, 197, 94, 0.6);
+    box-shadow: 0 0 14px rgba(34, 197, 94, 0.25);
+  }
+  .server-widget-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .server-widget .server-name { color: var(--text); font-weight: 600; font-size: 0.8rem; }
+  .server-widget .server-counts { letter-spacing: 0.02em; }
+
+  /* ---------- custom right-click menu ---------- */
+  .ctx-menu {
+    position: fixed;
+    z-index: 1001;
+    min-width: 198px;
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 18px var(--accent-glow);
+    padding: 6px;
+    display: none;
+  }
+  .ctx-menu.open { display: block; }
+  .ctx-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.82rem;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: url('Link.cur'), pointer;
+  }
+  .ctx-menu button:hover {
+    background: var(--card-bg-soft);
+    color: var(--accent);
+  }
+  .ctx-menu hr {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 4px 6px;
+  }
+
   /* ---------- typing tagline ---------- */
   .typing-tagline {
     margin: 0 0 18px;
@@ -301,8 +529,8 @@
   /* ---------- audio visualizer ---------- */
   .visualizer {
     display: block;
-    width: calc(100% - 56px);
-    height: 40px;
+    width: 130px;
+    height: 24px;
     margin: 6px auto 0;
   }
 
@@ -361,32 +589,29 @@
   .card-scroll::-webkit-scrollbar-track { background: transparent; }
   .card-scroll::-webkit-scrollbar-thumb { background: rgba(0, 242, 254, 0.35); border-radius: 10px; }
 
-  .panel { display: none; }
-  .panel.active { display: block; animation: fadeIn .25s ease; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
   .name {
     font-family: var(--font-display);
     font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     margin: 0 0 4px;
-    background: repeating-linear-gradient(100deg,
-      #17c964 0px,
-      #17c964 14px,
-      #eafff3 27px,
-      #17c964 40px,
-      #17c964 55px);
-    background-repeat: repeat;
+    background: linear-gradient(100deg,
+      #17c964 0%,
+      #17c964 40%,
+      #eafff3 50%,
+      #17c964 60%,
+      #17c964 100%);
+    background-size: 220% 100%;
     background-position: 0 0;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
+    animation: nameShine 3.2s linear infinite;
+  }
+
+  @keyframes nameShine {
+    to { background-position: -220% 0; }
   }
 
   .aliases {
@@ -427,39 +652,25 @@
     margin: 0;
   }
 
-  .project-list {
+  /* ---------- local time (bottom-left, mirrors audio-control) ---------- */
+  .local-time {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    z-index: 10;
   }
 
-  .project-card {
-    background: var(--card-bg-soft);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-left: 3px solid var(--accent);
-    border-radius: 10px;
-    padding: 14px 16px;
-    transition: transform .2s, border-color .2s;
-  }
-  .project-card:hover { transform: translateY(-2px); border-color: rgba(0, 242, 254, 0.6); }
-  .project-card h3 { margin: 0 0 4px; font-size: 0.95rem; font-family: var(--font-display); }
-  .project-card p { margin: 0 0 8px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
-  .project-card a { font-size: 0.8rem; color: var(--accent); text-decoration: none; font-weight: 600; cursor: url('Link.cur'), pointer; }
-  .project-card a:hover { text-decoration: underline; }
-
-  .donate-text { line-height: 1.7; font-size: 0.92rem; color: var(--text-muted); margin: 0 0 18px; }
-
-  .donate-btn {
-    display: inline-block;
-    padding: 10px 20px;
-    border-radius: 10px;
-    background: linear-gradient(45deg, var(--accent), var(--accent-2));
-    color: var(--bg);
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-decoration: none;
-    box-shadow: 0 0 16px var(--accent-glow);
-    cursor: url('Link.cur'), pointer;
+  .local-time svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
   }
 
   /* ---------- icon links ---------- */
@@ -467,10 +678,7 @@
     display: flex;
     justify-content: center;
     gap: 14px;
-    width: calc(100% - 56px);
-    margin-top: 18px;
-    padding-top: 18px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    width: 100%;
   }
 
   .icon-btn {
@@ -508,36 +716,6 @@
     transform: translateY(-3px);
   }
 
-  /* ---------- tab nav ---------- */
-  .tab-nav {
-    display: flex;
-    gap: 8px;
-    width: calc(100% - 56px);
-    padding: 18px 0 24px;
-  }
-
-  .tab-btn {
-    flex: 1;
-    padding: 10px 0;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    color: var(--text-muted);
-    font-family: var(--font-body);
-    font-size: 0.82rem;
-    letter-spacing: 0.03em;
-    cursor: url('Link.cur'), pointer;
-    transition: all .2s;
-  }
-  .tab-btn:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.25); }
-  .tab-btn.active {
-    color: var(--bg);
-    font-weight: 600;
-    background: linear-gradient(45deg, var(--accent), var(--accent-2));
-    border-color: transparent;
-    box-shadow: 0 0 16px var(--accent-glow);
-  }
-
   button:focus-visible, a:focus-visible, input:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
@@ -545,7 +723,7 @@
 
   @media (max-width: 480px) {
     .card-body { padding: 22px 20px 6px; }
-    .icon-row, .tab-nav { width: calc(100% - 40px); }
+    .card-footer { width: calc(100% - 40px); }
     .name { font-size: 1.6rem; }
   }
 
@@ -560,7 +738,12 @@
   <div class="bg-grid"></div>
   <div class="bg-glow"></div>
   <div class="led-border"></div>
-  <div class="egg-toast" id="eggToast">🥚 secret found!</div>
+  <div class="egg-toast" id="siteToast">🥚 secret found!</div>
+
+  <div class="local-time" id="localTime" title="My local time">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+    <span id="localTimeText">--:--</span>
+  </div>
 
   <!-- CUSTOMIZE: point this at your own track, or delete the whole .audio-control block and <audio> tag if you don't want music -->
   <div class="audio-control">
@@ -578,10 +761,18 @@
     <source src="song.mp3" type="audio/mpeg">
   </audio>
 
+  <div class="like-control">
+    <button class="like-btn" id="likeBtn" aria-label="Like this page" aria-pressed="false">
+      <svg id="heartIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6Z"></path></svg>
+    </button>
+    <span class="like-count" id="likeCount" title="Likes">···</span>
+  </div>
+
   <main class="card">
     <div class="avatar-wrap">
       <!-- CUSTOMIZE: swap for your own avatar image -->
       <img class="avatar" src="avatar.png" alt="AcatAlian avatar">
+      <span class="avatar-status" id="avatarStatus" title="My Discord status"></span>
     </div>
 
     <canvas class="visualizer" id="visualizer"></canvas>
@@ -589,10 +780,19 @@
     <div class="card-body">
       <div class="card-scroll">
 
-        <section class="panel active" id="panel-home">
+        <section id="panel-home">
           <!-- CUSTOMIZE: name, aliases -->
           <h1 class="name">Acat</h1>
           <p class="aliases"><span class="alias-word">Fizi</span> / <span class="alias-word">Acat</span> / <span class="alias-word">Alian</span></p>
+
+          <div class="id-row">
+            <button type="button" class="copy-chip" id="copyDiscord" title="Copy Discord username">
+              Discord · <kbd id="discordTag">fizi.acat</kbd>
+            </button>
+            <button type="button" class="copy-chip" id="copyRoblox" title="Copy Roblox username">
+              Roblox · <kbd id="robloxUser">Mybusises</kbd>
+            </button>
+          </div>
 
           <div class="discord-status" id="discordStatus">
             <span class="status-dot" id="statusDot"></span>
@@ -605,98 +805,61 @@
               <span class="spotify-artist" id="spotifyArtist"></span>
             </div>
           </div>
-
-          <p class="typing-tagline"><span id="typingText"></span><span class="typing-cursor">|</span></p>
-        </section>
-
-        <section class="panel" id="panel-projects">
-          <h2 class="section-title">Projects</h2>
-          <!-- CUSTOMIZE: duplicate .project-card for each project -->
-          <div class="project-list">
-            <div class="project-card">
-              <h3>Project One</h3>
-              <p>One or two lines describing what this project is and what you used to build it.</p>
-              <a href="#" target="_blank" rel="noopener">View project →</a>
-            </div>
-            <div class="project-card">
-              <h3>Project Two</h3>
-              <p>One or two lines describing what this project is and what you used to build it.</p>
-              <a href="#" target="_blank" rel="noopener">View project →</a>
+          <div class="activity-status" id="activityStatus">
+            <img id="activityArt" src="" alt="">
+            <div class="activity-info">
+              <span class="activity-name" id="activityName"></span>
+              <span class="activity-detail" id="activityDetail"></span>
             </div>
           </div>
-        </section>
+          <div class="activity-status" id="robloxStatus">
+            <img id="robloxArt" src="" alt="">
+            <div class="activity-info">
+              <span class="activity-name" id="robloxName"></span>
+              <span class="activity-detail" id="robloxDetail"></span>
+            </div>
+          </div>
 
-        <section class="panel" id="panel-donations">
-          <h2 class="section-title">Support</h2>
-          <!-- CUSTOMIZE: donation text and link -->
-          <p class="donate-text">
-            If you enjoy what I make and want to support it, you can do so here.
-            Every bit helps and is genuinely appreciated!
-          </p>
-          <a class="donate-btn" href="#" target="_blank" rel="noopener">Support me →</a>
+          <p class="typing-tagline"><span id="typingText"></span><span class="typing-cursor">|</span></p>
         </section>
 
       </div>
     </div>
 
     <!-- CUSTOMIZE: hrefs + point each img at your own logo PNG -->
-    <div class="icon-row">
-      <a class="icon-btn" href="https://www.youtube.com/channel/UChpTAFQFubLEuwPTyfSssqA" target="_blank" rel="noopener" title="YouTube">
-        <img src="youtube.png" alt="YouTube">
-      </a>
-      <a class="icon-btn" href="https://discord.gg/Cjc5QGhbFu" target="_blank" rel="noopener" title="Discord">
-        <img src="discord.png" alt="Discord" class="icon-discord">
-      </a>
-      <a class="icon-btn" href="https://www.roblox.com/users/1824718468/profile" target="_blank" rel="noopener" title="Roblox">
-        <img src="roblox.png" alt="Roblox">
+    <div class="card-footer">
+      <div class="icon-row">
+        <a class="icon-btn" href="https://www.youtube.com/channel/UChpTAFQFubLEuwPTyfSssqA" target="_blank" rel="noopener" title="YouTube">
+          <img src="youtube.png" alt="YouTube">
+        </a>
+        <a class="icon-btn" href="https://discord.gg/Cjc5QGhbFu" target="_blank" rel="noopener" title="Discord">
+          <img src="discord.png" alt="Discord" class="icon-discord">
+        </a>
+        <a class="icon-btn" href="https://www.roblox.com/users/1824718468/profile" target="_blank" rel="noopener" title="Roblox">
+          <img src="roblox.png" alt="Roblox">
+        </a>
+      </div>
+      <a class="server-widget" id="serverWidget" href="https://discord.gg/Cjc5QGhbFu" target="_blank" rel="noopener" title="Join the Discord">
+        <span class="status-dot online"></span>
+        <span class="server-widget-text">
+          <span class="server-name" id="serverName">Alian</span>
+          <span class="server-counts" id="serverCounts">Loading members…</span>
+        </span>
       </a>
     </div>
-
-
-    <nav class="tab-nav">
-      <button class="tab-btn" data-target="panel-projects">projects</button>
-      <button class="tab-btn" data-target="panel-donations">donations</button>
-    </nav>
   </main>
 
+  <div class="ctx-menu" id="ctxMenu" role="menu">
+    <button type="button" data-action="copy-link">Copy page link</button>
+    <button type="button" data-action="copy-discord">Copy Discord</button>
+    <button type="button" data-action="copy-roblox">Copy Roblox</button>
+    <hr>
+    <button type="button" data-action="open-discord">Open Discord</button>
+    <button type="button" data-action="open-roblox">Open Roblox</button>
+    <button type="button" data-action="view-source">View source</button>
+  </div>
+
   <script>
-    // --- name gradient shine (driven by JS, not CSS @keyframes, so it
-    // can't silently fail to repaint the way the background-position
-    // animation did) ---
-    const nameEl = document.querySelector('.name');
-    if (nameEl) {
-      // The CSS pattern already repeats infinitely on its own — so instead
-      // of computing an exact "seamless" wrap distance and resetting pos
-      // periodically (which is where any tiny rounding error shows up as
-      // a visible snap), just let pos count up forever. No wrap, no seam.
-      const speed = 55 / 0.8; // px per second — same pace as before
-      let pos = 0;
-      let lastTime = null;
-      function animateName(now) {
-        if (lastTime !== null) {
-          const dt = (now - lastTime) / 1000;
-          pos += speed * dt;
-          nameEl.style.backgroundPosition = pos + 'px 0';
-        }
-        lastTime = now;
-        requestAnimationFrame(animateName);
-      }
-      requestAnimationFrame(animateName);
-    }
-
-    // --- tab switching ---
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const panels = document.querySelectorAll('.panel');
-
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tabButtons.forEach(b => b.classList.remove('active'));
-        panels.forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.target).classList.add('active');
-      });
-    });
-
     // --- audio control ---
     const audio = document.getElementById('bgAudio');
     const muteBtn = document.getElementById('muteBtn');
@@ -708,6 +871,50 @@
     const iconOff = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line>';
 
     audio.volume = volumeSlider.value / 100;
+
+    // Shared identity used by copy chips, the context menu, and live status cards.
+    // CUSTOMIZE: keep these in sync with your Discord / Roblox accounts.
+    const PROFILE = {
+      discordTag: 'fizi.acat',
+      robloxUser: 'Mybusises',
+      robloxId: 1824718468,
+      discordInvite: 'Cjc5QGhbFu',
+      discordGuildId: '1335494070340161538',
+      discordUrl: 'https://discord.gg/Cjc5QGhbFu',
+      robloxUrl: 'https://www.roblox.com/users/1824718468/profile'
+    };
+
+    function showToast(message) {
+      const toast = document.getElementById('siteToast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    function copyText(text, okMessage) {
+      const done = () => showToast(okMessage || 'Copied!');
+      const value = String(text || '');
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(value).then(done).catch(() => fallbackCopy(value, done));
+      } else {
+        fallbackCopy(value, done);
+      }
+    }
+
+    function fallbackCopy(text, done) {
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.left = '-9999px';
+      document.body.appendChild(area);
+      area.select();
+      try { document.execCommand('copy'); done(); }
+      catch (err) { showToast('Copy failed'); }
+      area.remove();
+    }
 
     // Try real autoplay with sound first. Browsers allow this for some
     // visitors (repeat visits, granted permissions, etc). If it's blocked,
@@ -799,10 +1006,15 @@
       const DISCORD_ID = '1290227925072871435';
       const statusDot = document.getElementById('statusDot');
       const statusText = document.getElementById('statusText');
+      const avatarStatus = document.getElementById('avatarStatus');
       const spotifyBox = document.getElementById('spotifyStatus');
       const spotifyArt = document.getElementById('spotifyArt');
       const spotifySong = document.getElementById('spotifySong');
       const spotifyArtist = document.getElementById('spotifyArtist');
+      const activityBox = document.getElementById('activityStatus');
+      const activityArt = document.getElementById('activityArt');
+      const activityName = document.getElementById('activityName');
+      const activityDetail = document.getElementById('activityDetail');
       if (!statusDot) return;
 
       if (DISCORD_ID === 'YOUR_DISCORD_ID') {
@@ -812,10 +1024,34 @@
 
       const labels = { online: 'Online', idle: 'Idle', dnd: 'Do Not Disturb', offline: 'Offline' };
 
+      // Discord Rich Presence activity "type" values: 0 Playing, 1 Streaming,
+      // 2 Listening (Spotify — already handled by the dedicated box above),
+      // 3 Watching, 4 Custom Status (plain text/emoji, skipped here), 5 Competing.
+      const ACTIVITY_VERBS = { 0: 'Playing', 1: 'Streaming', 3: 'Watching', 5: 'Competing in' };
+
+      // Rich Presence images come in a couple of shapes depending on source —
+      // a raw Discord app-asset hash, or an "mp:"/"spotify:" prefixed key for
+      // externally hosted art. This normalizes any of them into a real URL.
+      function activityImageUrl(activity) {
+        const img = activity.assets && activity.assets.large_image;
+        if (!img) return null;
+        if (img.startsWith('mp:')) return `https://media.discordapp.net/${img.slice(3)}`;
+        if (img.startsWith('spotify:')) return `https://i.scdn.co/image/${img.slice(8)}`;
+        return `https://cdn.discordapp.com/app-assets/${activity.application_id}/${img}.png`;
+      }
+
       function render(data) {
         const status = data.discord_status || 'offline';
         statusDot.className = 'status-dot ' + status;
         statusText.textContent = labels[status] || 'Offline';
+        if (avatarStatus) avatarStatus.className = 'avatar-status ' + status;
+
+        const user = data.discord_user;
+        if (user && user.username) {
+          PROFILE.discordTag = user.username;
+          const tagEl = document.getElementById('discordTag');
+          if (tagEl) tagEl.textContent = user.username;
+        }
 
         if (data.listening_to_spotify && data.spotify) {
           spotifyArt.src = data.spotify.album_art_url;
@@ -824,6 +1060,21 @@
           spotifyBox.style.display = 'flex';
         } else {
           spotifyBox.style.display = 'none';
+        }
+
+        // Full activity status: games and apps, not just Spotify.
+        const activity = (data.activities || []).find(a => ACTIVITY_VERBS[a.type] !== undefined);
+        if (activity && activityBox) {
+          activityName.textContent = `${ACTIVITY_VERBS[activity.type]} ${activity.name}`;
+          activityDetail.textContent = activity.details || activity.state || '';
+
+          const imgUrl = activityImageUrl(activity);
+          activityArt.style.display = imgUrl ? 'block' : 'none';
+          if (imgUrl) activityArt.src = imgUrl;
+
+          activityBox.style.display = 'flex';
+        } else if (activityBox) {
+          activityBox.style.display = 'none';
         }
       }
 
@@ -861,18 +1112,23 @@
       window.addEventListener('resize', resize);
       resize();
 
+      // Only the lower end of the spectrum carries real energy for most
+      // music — rendering the full frequency range left a cluster of live
+      // bars followed by a long stretch of near-silent ones. Using fewer,
+      // wider bars over just that active range keeps it compact instead.
+      const BAR_COUNT = 10;
+
       function draw() {
         requestAnimationFrame(draw);
         if (!analyser) return;
         analyser.getByteFrequencyData(dataArray);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const barCount = dataArray.length;
-        const barWidth = canvas.width / barCount;
+        const barWidth = canvas.width / BAR_COUNT;
         const grad = ctx.createLinearGradient(0, canvas.height, 0, 0);
         grad.addColorStop(0, '#4facfe');
         grad.addColorStop(1, '#00f2fe');
         ctx.fillStyle = grad;
-        for (let i = 0; i < barCount; i++) {
+        for (let i = 0; i < BAR_COUNT; i++) {
           const v = dataArray[i] / 255;
           const barHeight = Math.max(2, v * canvas.height);
           ctx.fillRect(i * barWidth + 1, canvas.height - barHeight, barWidth - 2, barHeight);
@@ -885,7 +1141,7 @@
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const source = audioCtx.createMediaElementSource(audio);
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 64;
+        analyser.fftSize = 32;
         source.connect(analyser);
         analyser.connect(audioCtx.destination);
         dataArray = new Uint8Array(analyser.frequencyBinCount);
@@ -945,7 +1201,6 @@
     (function () {
       const code = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
       let progress = 0;
-      const toast = document.getElementById('eggToast');
       const colors = ['#00f2fe', '#4facfe', '#17c964', '#eafff3'];
 
       function confettiBurst() {
@@ -963,10 +1218,7 @@
 
       function trigger() {
         confettiBurst();
-        if (toast) {
-          toast.classList.add('show');
-          setTimeout(() => toast.classList.remove('show'), 2600);
-        }
+        showToast('🥚 secret found!');
       }
 
       window.addEventListener('keydown', (e) => {
@@ -975,6 +1227,314 @@
         if (progress === code.length) {
           progress = 0;
           trigger();
+        }
+      });
+    })();
+
+    // --- local time (your own timezone, not the visitor's) ---
+    (function () {
+      const el = document.getElementById('localTimeText');
+      if (!el) return;
+
+      // CUSTOMIZE: set this to your own IANA timezone name.
+      // Full list: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+      const TIMEZONE = 'Asia/Kuala_Lumpur';
+
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: TIMEZONE,
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+
+      function update() {
+        el.textContent = formatter.format(new Date());
+      }
+
+      update();
+      setInterval(update, 30000); // a clock this coarse doesn't need per-second ticks
+    })();
+
+    // --- cursor trail effect ---
+    // Spawns small glowing dots that follow the pointer and fade out. Skips
+    // itself on touch devices (no real cursor to trail) and when the visitor
+    // has asked for reduced motion.
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (window.matchMedia('(pointer: coarse)').matches) return;
+
+      let lastSpawn = 0;
+      const MIN_GAP = 30; // ms between dots — keeps it a trail, not a smear
+
+      window.addEventListener('pointermove', (e) => {
+        const now = performance.now();
+        if (now - lastSpawn < MIN_GAP) return;
+        lastSpawn = now;
+
+        const dot = document.createElement('div');
+        dot.className = 'cursor-trail-dot';
+        dot.style.left = e.clientX + 'px';
+        dot.style.top = e.clientY + 'px';
+        document.body.appendChild(dot);
+
+        // Let it paint at full opacity for a frame, then transition out —
+        // starting the transition immediately on append can get skipped.
+        requestAnimationFrame(() => {
+          dot.style.opacity = '0';
+          dot.style.transform = 'translate(-50%, -50%) scale(0.2)';
+        });
+
+        setTimeout(() => dot.remove(), 550);
+      });
+    })();
+
+    // --- like button (heart counter) ---
+    // Same Abacus service as the view counter above, but user-triggered: a
+    // click adds one like (a single /hit/ call) and is remembered in
+    // localStorage so the heart shows as already-liked on repeat visits in
+    // the same browser. There's no "unlike" — Abacus doesn't expose a
+    // decrement endpoint, so once liked the button just stays filled.
+    (function () {
+      const likeBtn = document.getElementById('likeBtn');
+      const likeCountEl = document.getElementById('likeCount');
+      if (!likeBtn) return;
+
+      const NAMESPACE = 'acatalian-portfolio';
+      const KEY = 'likes';
+      const STORAGE_FLAG = 'acatalian_liked';
+
+      function setLiked() {
+        likeBtn.classList.add('liked');
+        likeBtn.setAttribute('aria-pressed', 'true');
+        likeBtn.disabled = true;
+      }
+
+      if (localStorage.getItem(STORAGE_FLAG)) setLiked();
+
+      fetch(`https://abacus.jasoncameron.dev/get/${NAMESPACE}/${KEY}`)
+        .then(res => res.json())
+        .then(data => { likeCountEl.textContent = Number(data.value).toLocaleString(); })
+        .catch(() => { likeCountEl.textContent = '—'; });
+
+      likeBtn.addEventListener('click', () => {
+        if (localStorage.getItem(STORAGE_FLAG)) return; // one like per browser
+
+        setLiked();
+        localStorage.setItem(STORAGE_FLAG, '1');
+
+        fetch(`https://abacus.jasoncameron.dev/hit/${NAMESPACE}/${KEY}`)
+          .then(res => res.json())
+          .then(data => { likeCountEl.textContent = Number(data.value).toLocaleString(); })
+          .catch(() => { /* count will resync next time the page loads */ });
+      });
+    })();
+
+    // --- copy Discord tag / Roblox username ---
+    (function () {
+      const discordBtn = document.getElementById('copyDiscord');
+      const robloxBtn = document.getElementById('copyRoblox');
+      if (discordBtn) {
+        discordBtn.addEventListener('click', () => copyText(PROFILE.discordTag, 'Copied!'));
+      }
+      if (robloxBtn) {
+        robloxBtn.addEventListener('click', () => copyText(PROFILE.robloxUser, 'Copied!'));
+      }
+    })();
+
+    // --- live Roblox status (presence.roblox.com via RoProxy for CORS) ---
+    // Presence is public and needs no cookie. Place/game names only show when
+    // the account's privacy settings allow them; otherwise we still show
+    // Online / Playing / Studio from userPresenceType.
+    (function () {
+      const box = document.getElementById('robloxStatus');
+      const art = document.getElementById('robloxArt');
+      const nameEl = document.getElementById('robloxName');
+      const detailEl = document.getElementById('robloxDetail');
+      const userEl = document.getElementById('robloxUser');
+      if (!box) return;
+
+      const TYPES = { 0: 'Offline', 1: 'Online', 2: 'InGame', 3: 'InStudio', 4: 'Invisible' };
+
+      function setHeadshot() {
+        fetch(`https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds=${PROFILE.robloxId}&size=48x48&format=Png`)
+          .then(res => res.json())
+          .then(json => {
+            const url = json.data && json.data[0] && json.data[0].imageUrl;
+            if (url) {
+              art.src = url;
+              art.style.display = 'block';
+            }
+          })
+          .catch(() => { art.style.display = 'none'; });
+      }
+
+      function setPlaceIcon(placeId) {
+        fetch(`https://thumbnails.roproxy.com/v1/places/gameicons?placeIds=${placeId}&size=50x50&format=Png`)
+          .then(res => res.json())
+          .then(json => {
+            const url = json.data && json.data[0] && json.data[0].imageUrl;
+            if (url) {
+              art.src = url;
+              art.style.display = 'block';
+            }
+          })
+          .catch(() => {});
+      }
+
+      function hide() {
+        box.style.display = 'none';
+      }
+
+      function renderPresence(p) {
+        const type = p.userPresenceType;
+        if (type === 0 || type === 4 || TYPES[type] === undefined) {
+          hide();
+          return;
+        }
+
+        if (type === 1) {
+          nameEl.textContent = 'Online on Roblox';
+          detailEl.textContent = p.lastLocation && p.lastLocation !== 'Website' ? p.lastLocation : 'Browsing';
+          setHeadshot();
+        } else if (type === 2) {
+          const place = p.lastLocation && p.lastLocation !== 'Website' ? p.lastLocation : 'a game';
+          nameEl.textContent = 'Playing ' + place;
+          detailEl.textContent = 'Roblox';
+          if (p.placeId) setPlaceIcon(p.placeId);
+          else setHeadshot();
+        } else if (type === 3) {
+          nameEl.textContent = 'In Roblox Studio';
+          detailEl.textContent = p.lastLocation || 'Creating';
+          setHeadshot();
+        }
+
+        box.style.display = 'flex';
+      }
+
+      fetch(`https://users.roproxy.com/v1/users/${PROFILE.robloxId}`)
+        .then(res => res.json())
+        .then(user => {
+          if (user && user.name) {
+            PROFILE.robloxUser = user.name;
+            if (userEl) userEl.textContent = user.name;
+          }
+        })
+        .catch(() => {});
+
+      function poll() {
+        fetch('https://presence.roproxy.com/v1/presence/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userIds: [PROFILE.robloxId] })
+        })
+          .then(res => res.json())
+          .then(json => {
+            const p = json.userPresences && json.userPresences[0];
+            if (p) renderPresence(p);
+            else hide();
+          })
+          .catch(() => hide());
+      }
+
+      poll();
+      setInterval(poll, 20000);
+    })();
+
+    // --- Discord server member/online counts ---
+    // Official widget.json needs Server Settings → Widget enabled.
+    // The public invite payload (via japi.rest for CORS) already has both counts.
+    (function () {
+      const countsEl = document.getElementById('serverCounts');
+      const nameEl = document.getElementById('serverName');
+      if (!countsEl) return;
+
+      function apply(name, online, members) {
+        if (name && nameEl) nameEl.textContent = name;
+        if (online == null && members == null) {
+          countsEl.textContent = 'Invite to join';
+          return;
+        }
+        const onlineText = Number(online || 0).toLocaleString() + ' online';
+        const memberText = Number(members || 0).toLocaleString() + ' members';
+        countsEl.textContent = onlineText + ' · ' + memberText;
+      }
+
+      function fromInvitePayload(d) {
+        if (!d) return false;
+        const members = d.approximate_member_count || (d.profile && d.profile.member_count);
+        const online = d.approximate_presence_count || (d.profile && d.profile.online_count);
+        const name = (d.guild && d.guild.name) || (d.profile && d.profile.name);
+        if (members == null && online == null) return false;
+        apply(name, online, members);
+        return true;
+      }
+
+      fetch('https://japi.rest/discord/v1/invite/' + PROFILE.discordInvite)
+        .then(res => res.json())
+        .then(json => {
+          if (fromInvitePayload(json.data || json)) return;
+          return Promise.reject();
+        })
+        .catch(() => {
+          fetch(`https://discord.com/api/guilds/${PROFILE.discordGuildId}/widget.json`)
+            .then(res => res.ok ? res.json() : Promise.reject())
+            .then(json => {
+              apply(json.name, json.presence_count, null);
+              if (json.presence_count != null) {
+                countsEl.textContent = Number(json.presence_count).toLocaleString() + ' online';
+              }
+            })
+            .catch(() => { countsEl.textContent = 'Join the server'; });
+        });
+    })();
+
+    // --- custom right-click menu ---
+    (function () {
+      const menu = document.getElementById('ctxMenu');
+      if (!menu) return;
+
+      function hide() {
+        menu.classList.remove('open');
+      }
+
+      function place(x, y) {
+        menu.classList.add('open');
+        const pad = 8;
+        const w = menu.offsetWidth;
+        const h = menu.offsetHeight;
+        const left = Math.min(x, window.innerWidth - w - pad);
+        const top = Math.min(y, window.innerHeight - h - pad);
+        menu.style.left = Math.max(pad, left) + 'px';
+        menu.style.top = Math.max(pad, top) + 'px';
+      }
+
+      window.addEventListener('contextmenu', (e) => {
+        if (e.target.closest('input, textarea, audio')) return;
+        e.preventDefault();
+        place(e.clientX, e.clientY);
+      });
+
+      window.addEventListener('click', hide);
+      window.addEventListener('scroll', hide, true);
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') hide();
+      });
+
+      menu.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        e.stopPropagation();
+        const action = btn.getAttribute('data-action');
+        hide();
+        if (action === 'copy-link') copyText(location.href, 'Copied!');
+        if (action === 'copy-discord') copyText(PROFILE.discordTag, 'Copied!');
+        if (action === 'copy-roblox') copyText(PROFILE.robloxUser, 'Copied!');
+        if (action === 'open-discord') window.open(PROFILE.discordUrl, '_blank', 'noopener');
+        if (action === 'open-roblox') window.open(PROFILE.robloxUrl, '_blank', 'noopener');
+        if (action === 'view-source') {
+          const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+          const blob = new Blob([html], { type: 'text/html' });
+          window.open(URL.createObjectURL(blob), '_blank', 'noopener');
         }
       });
     })();
