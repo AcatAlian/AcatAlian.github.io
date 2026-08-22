@@ -45,15 +45,25 @@
     cursor: url('Normal.cur'), auto;
   }
 
-  /* ---------- ambient background ---------- */
-  .bg-image {
+  /* ---------- ambient background (crossfading video slideshow) ---------- */
+  .bg-slideshow {
     position: fixed;
     inset: 0;
     z-index: -3;
-    background-image: url('background.gif');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+  }
+
+  .bg-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+  }
+
+  .bg-slide.active {
+    opacity: 1;
   }
 
   .bg-grid {
@@ -488,25 +498,6 @@
     margin: 4px 6px;
   }
 
-  /* ---------- typing tagline ---------- */
-  .typing-tagline {
-    margin: 0 0 18px;
-    font-size: 0.88rem;
-    color: var(--accent);
-    min-height: 1.3em;
-  }
-
-  .typing-cursor {
-    display: inline-block;
-    margin-left: 1px;
-    animation: cursorBlink 0.9s step-end infinite;
-  }
-
-  @keyframes cursorBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-
   /* ---------- audio visualizer ---------- */
   .visualizer {
     display: block;
@@ -520,7 +511,7 @@
     font-size: 0.68rem;
     color: var(--text-muted);
     text-align: center;
-    max-width: 220px;
+    max-width: 260px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -735,7 +726,14 @@
 </head>
 <body>
 
-  <div class="bg-image"></div>
+  <!-- CUSTOMIZE: list your mp4 clips here — add or remove <video class="bg-slide"> blocks freely, the script adapts automatically -->
+  <div class="bg-slideshow" id="bgSlideshow">
+    <video class="bg-slide active" autoplay muted loop playsinline><source src="background1.mp4" type="video/mp4"></video>
+    <video class="bg-slide" autoplay muted loop playsinline><source src="background2.mp4" type="video/mp4"></video>
+    <video class="bg-slide" autoplay muted loop playsinline><source src="background3.mp4" type="video/mp4"></video>
+    <video class="bg-slide" autoplay muted loop playsinline><source src="background4.mp4" type="video/mp4"></video>
+    <video class="bg-slide" autoplay muted loop playsinline><source src="background5.mp4" type="video/mp4"></video>
+  </div>
   <div class="bg-grid"></div>
   <div class="bg-glow"></div>
   <canvas class="bg-particles" id="bgParticles"></canvas>
@@ -781,7 +779,7 @@
 
     <canvas class="visualizer" id="visualizer"></canvas>
     <!-- CUSTOMIZE: change to your actual track name / artist -->
-    <p class="now-playing" id="nowPlaying">♪ Song Title — Artist</p>
+    <p class="now-playing" id="nowPlaying">♪ Theme (Donkey Kong Country) — David Wise</p>
 
     <div class="card-body">
       <div class="card-scroll">
@@ -825,8 +823,6 @@
               <span class="activity-detail" id="robloxDetail"></span>
             </div>
           </div>
-
-          <p class="typing-tagline"><span id="typingText"></span><span class="typing-cursor">|</span></p>
         </section>
 
       </div>
@@ -1150,49 +1146,6 @@
         if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
         setup();
       });
-    })();
-
-    // --- typing effect tagline ---
-    (function () {
-      const el = document.getElementById('typingText');
-      if (!el) return;
-
-      // CUSTOMIZE: swap these for whatever lines you want cycling through.
-      const PHRASES = [
-        'building weird little things',
-        'probably listening to music',
-        'say hi on discord'
-      ];
-
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        el.textContent = PHRASES[0];
-        return;
-      }
-
-      let phraseIndex = 0, charIndex = 0, deleting = false;
-
-      function tick() {
-        const current = PHRASES[phraseIndex];
-        if (!deleting) {
-          charIndex++;
-          el.textContent = current.slice(0, charIndex);
-          if (charIndex === current.length) {
-            deleting = true;
-            setTimeout(tick, 1400);
-            return;
-          }
-        } else {
-          charIndex--;
-          el.textContent = current.slice(0, charIndex);
-          if (charIndex === 0) {
-            deleting = false;
-            phraseIndex = (phraseIndex + 1) % PHRASES.length;
-          }
-        }
-        setTimeout(tick, deleting ? 35 : 65);
-      }
-
-      tick();
     })();
 
     // --- konami code easter egg ---
@@ -1559,6 +1512,26 @@
       img.src = 'avatar.png';
 
       window.setFaviconStatus = draw;
+    })();
+
+    // --- background video crossfade slideshow ---
+    // Holds each clip fully visible for HOLD_MS, then crossfades to the
+    // next. All clips stay in the DOM the whole time (just at opacity 0)
+    // rather than being swapped in/out, so playback keeps looping
+    // continuously instead of restarting from frame one every cycle.
+    (function () {
+      const slides = document.querySelectorAll('.bg-slide');
+      if (slides.length < 2) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const HOLD_MS = 4000; // how long each gif is shown before crossfading
+      let index = 0;
+
+      setInterval(() => {
+        slides[index].classList.remove('active');
+        index = (index + 1) % slides.length;
+        slides[index].classList.add('active');
+      }, HOLD_MS);
     })();
 
     // --- ambient background particles ---
