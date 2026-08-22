@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AcatAlian | Portfolio</title>
+<link rel="icon" id="faviconLink" href="avatar.png">
 <meta name="description" content="AcatAlian's personal corner of the internet.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -74,6 +75,13 @@
     background:
       radial-gradient(circle at 15% 20%, rgba(0, 242, 254, 0.10), transparent 40%),
       radial-gradient(circle at 85% 80%, rgba(79, 172, 254, 0.10), transparent 40%);
+  }
+
+  .bg-particles {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
   }
 
   /* ---------- chasing LED border ---------- */
@@ -444,33 +452,6 @@
     gap: 12px;
   }
 
-  .server-widget {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    background: var(--card-bg-soft);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 8px 12px;
-    width: 100%;
-    cursor: url('Link.cur'), pointer;
-    transition: border-color .2s, box-shadow .2s;
-  }
-  .server-widget:hover {
-    border-color: rgba(34, 197, 94, 0.6);
-    box-shadow: 0 0 14px rgba(34, 197, 94, 0.25);
-  }
-  .server-widget-text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-  .server-widget .server-name { color: var(--text); font-weight: 600; font-size: 0.8rem; }
-  .server-widget .server-counts { letter-spacing: 0.02em; }
-
   /* ---------- custom right-click menu ---------- */
   .ctx-menu {
     position: fixed;
@@ -533,6 +514,20 @@
     height: 24px;
     margin: 6px auto 0;
   }
+
+  .now-playing {
+    margin: 2px 0 0;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-align: center;
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .now-playing.visible { opacity: 1; }
 
   /* ---------- konami easter egg ---------- */
   .egg-toast {
@@ -675,6 +670,10 @@
     flex-shrink: 0;
   }
 
+  .local-time-zone {
+    opacity: 0.7;
+  }
+
   /* ---------- icon links ---------- */
   .icon-row {
     display: flex;
@@ -739,12 +738,15 @@
   <div class="bg-image"></div>
   <div class="bg-grid"></div>
   <div class="bg-glow"></div>
+  <canvas class="bg-particles" id="bgParticles"></canvas>
   <div class="led-border"></div>
   <div class="egg-toast" id="siteToast">🥚 secret found!</div>
 
   <div class="local-time" id="localTime" title="My local time">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
     <span id="localTimeText">--:--</span>
+    <!-- CUSTOMIZE: swap this label if you change the TIMEZONE constant in the script -->
+    <span class="local-time-zone">· Malaysia (GMT+8)</span>
   </div>
 
   <!-- CUSTOMIZE: point this at your own track, or delete the whole .audio-control block and <audio> tag if you don't want music -->
@@ -778,6 +780,8 @@
     </div>
 
     <canvas class="visualizer" id="visualizer"></canvas>
+    <!-- CUSTOMIZE: change to your actual track name / artist -->
+    <p class="now-playing" id="nowPlaying">♪ Song Title — Artist</p>
 
     <div class="card-body">
       <div class="card-scroll">
@@ -841,13 +845,6 @@
           <img src="roblox.png" alt="Roblox">
         </a>
       </div>
-      <a class="server-widget" id="serverWidget" href="https://discord.gg/Cjc5QGhbFu" target="_blank" rel="noopener" title="Join the Discord">
-        <span class="status-dot online"></span>
-        <span class="server-widget-text">
-          <span class="server-name" id="serverName">Alian</span>
-          <span class="server-counts" id="serverCounts">Loading members…</span>
-        </span>
-      </a>
     </div>
   </main>
 
@@ -880,8 +877,6 @@
       discordTag: 'fizi.acat',
       robloxUser: 'Mybusises',
       robloxId: 1824718468,
-      discordInvite: 'Cjc5QGhbFu',
-      discordGuildId: '1335494070340161538',
       discordUrl: 'https://discord.gg/Cjc5QGhbFu',
       robloxUrl: 'https://www.roblox.com/users/1824718468/profile'
     };
@@ -1047,6 +1042,7 @@
         statusDot.className = 'status-dot ' + status;
         statusText.textContent = labels[status] || 'Offline';
         if (avatarStatus) avatarStatus.className = 'avatar-status ' + status;
+        if (window.setFaviconStatus) window.setFaviconStatus(status);
 
         const user = data.discord_user;
         if (user && user.username) {
@@ -1442,54 +1438,6 @@
       setInterval(poll, 20000);
     })();
 
-    // --- Discord server member/online counts ---
-    // Official widget.json needs Server Settings → Widget enabled.
-    // The public invite payload (via japi.rest for CORS) already has both counts.
-    (function () {
-      const countsEl = document.getElementById('serverCounts');
-      const nameEl = document.getElementById('serverName');
-      if (!countsEl) return;
-
-      function apply(name, online, members) {
-        if (name && nameEl) nameEl.textContent = name;
-        if (online == null && members == null) {
-          countsEl.textContent = 'Invite to join';
-          return;
-        }
-        const onlineText = Number(online || 0).toLocaleString() + ' online';
-        const memberText = Number(members || 0).toLocaleString() + ' members';
-        countsEl.textContent = onlineText + ' · ' + memberText;
-      }
-
-      function fromInvitePayload(d) {
-        if (!d) return false;
-        const members = d.approximate_member_count || (d.profile && d.profile.member_count);
-        const online = d.approximate_presence_count || (d.profile && d.profile.online_count);
-        const name = (d.guild && d.guild.name) || (d.profile && d.profile.name);
-        if (members == null && online == null) return false;
-        apply(name, online, members);
-        return true;
-      }
-
-      fetch('https://japi.rest/discord/v1/invite/' + PROFILE.discordInvite)
-        .then(res => res.json())
-        .then(json => {
-          if (fromInvitePayload(json.data || json)) return;
-          return Promise.reject();
-        })
-        .catch(() => {
-          fetch(`https://discord.com/api/guilds/${PROFILE.discordGuildId}/widget.json`)
-            .then(res => res.ok ? res.json() : Promise.reject())
-            .then(json => {
-              apply(json.name, json.presence_count, null);
-              if (json.presence_count != null) {
-                countsEl.textContent = Number(json.presence_count).toLocaleString() + ' online';
-              }
-            })
-            .catch(() => { countsEl.textContent = 'Join the server'; });
-        });
-    })();
-
     // --- custom right-click menu ---
     (function () {
       const menu = document.getElementById('ctxMenu');
@@ -1538,6 +1486,143 @@
           const blob = new Blob([html], { type: 'text/html' });
           window.open(URL.createObjectURL(blob), '_blank', 'noopener');
         }
+      });
+    })();
+
+    // --- now playing label (visualizer) ---
+    // Purely local — it's your own single background track, not a live feed,
+    // so it just shows/hides with actual playback rather than polling anything.
+    (function () {
+      const el = document.getElementById('nowPlaying');
+      if (!el) return;
+      function sync() { el.classList.toggle('visible', !audio.paused); }
+      audio.addEventListener('play', sync);
+      audio.addEventListener('pause', sync);
+      sync();
+    })();
+
+    // --- dynamic favicon status dot ---
+    // Draws your avatar onto an offscreen canvas with a small colored dot in
+    // the corner (same colors as the on-page status indicator) and sets it
+    // as the tab's favicon. Called from the Lanyard render() above whenever
+    // your status changes, so the browser tab stays in sync even when the
+    // page itself isn't the one being looked at.
+    (function () {
+      const SIZE = 64;
+      const canvas = document.createElement('canvas');
+      canvas.width = SIZE;
+      canvas.height = SIZE;
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      let loaded = false;
+      let pending = 'offline';
+
+      const STATUS_COLORS = { online: '#23a55a', idle: '#f0b232', dnd: '#f23f43', offline: '#80848e' };
+
+      let link = document.getElementById('faviconLink');
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        link.id = 'faviconLink';
+        document.head.appendChild(link);
+      }
+
+      function draw(status) {
+        if (!loaded) { pending = status; return; }
+        ctx.clearRect(0, 0, SIZE, SIZE);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(img, 0, 0, SIZE, SIZE);
+        ctx.restore();
+
+        const r = SIZE * 0.17;
+        const cx = SIZE - r - 2;
+        const cy = SIZE - r - 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r + 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f1115'; // matches --bg, so the dot reads clearly against any avatar
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = STATUS_COLORS[status] || STATUS_COLORS.offline;
+        ctx.fill();
+
+        try { link.href = canvas.toDataURL('image/png'); } catch (err) { /* ignore */ }
+      }
+
+      img.onload = () => { loaded = true; draw(pending); };
+      img.onerror = () => { /* keep the static favicon if the avatar fails to load */ };
+      img.src = 'avatar.png';
+
+      window.setFaviconStatus = draw;
+    })();
+
+    // --- ambient background particles ---
+    (function () {
+      const canvas = document.getElementById('bgParticles');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const COLORS = ['#00f2fe', '#4facfe', '#17c964'];
+      let particles = [];
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function spawn() {
+        const count = Math.min(60, Math.floor((canvas.width * canvas.height) / 22000));
+        particles = Array.from({ length: count }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: 1 + Math.random() * 1.8,
+          vx: (Math.random() - 0.5) * 0.15,
+          vy: (Math.random() - 0.5) * 0.15,
+          color: COLORS[Math.floor(Math.random() * COLORS.length)],
+          alpha: 0.15 + Math.random() * 0.25
+        }));
+      }
+
+      function handleResize() { resize(); spawn(); }
+      window.addEventListener('resize', handleResize);
+      resize();
+      spawn();
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0) p.x = canvas.width;
+          if (p.x > canvas.width) p.x = 0;
+          if (p.y < 0) p.y = canvas.height;
+          if (p.y > canvas.height) p.y = 0;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+        if (!reduceMotion) requestAnimationFrame(draw);
+      }
+      draw(); // draws one static frame even under reduced motion, then stops
+    })();
+
+    // --- tab title change on blur ---
+    (function () {
+      const ORIGINAL_TITLE = document.title;
+      // CUSTOMIZE: whatever you want the tab to say while it's not in focus
+      const AWAY_TITLE = '👋 come back!';
+
+      document.addEventListener('visibilitychange', () => {
+        document.title = document.hidden ? AWAY_TITLE : ORIGINAL_TITLE;
       });
     })();
   </script>
