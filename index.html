@@ -59,11 +59,10 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity var(--bg-fade-duration, 2.2s) ease-in-out;
-    /* Promotes each video to its own compositor layer so the browser
-       blends them smoothly instead of re-rasterizing on every frame —
-       without this, simultaneous video decode + opacity crossfade can
-       look choppy rather than a smooth dissolve. */
+    /* No CSS transition here on purpose — the fade is driven by the
+       Web Animations API in JS instead, so it can't be silently zeroed
+       out by any CSS transition/animation rule (including the
+       reduced-motion reset below). */
     will-change: opacity;
     transform: translateZ(0);
   }
@@ -726,11 +725,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    /* .bg-slide is exempted here on purpose — its own script already
-       handles reduced motion (instant swap via --bg-fade-duration), so
-       this blanket rule would otherwise silently override that with
-       !important and force the crossfade to ~0s regardless. */
-    *:not(.bg-slide) { animation: none !important; transition: none !important; }
+    * { animation: none !important; transition: none !important; }
   }
 </style>
 </head>
@@ -1529,6 +1524,12 @@
     // next. All clips stay in the DOM the whole time (just at opacity 0)
     // rather than being swapped in/out, so playback keeps looping
     // continuously instead of restarting from frame one every cycle.
+    //
+    // The fade itself runs through .animate() (Web Animations API)
+    // rather than a CSS transition. WAAPI isn't governed by the CSS
+    // `transition`/`animation` properties at all, so it can't be zeroed
+    // out by a stray `transition: none !important` rule the way a CSS
+    // transition can — it just always runs the duration given here.
     (function () {
       const slides = document.querySelectorAll('.bg-slide');
       if (slides.length < 2) return;
@@ -1537,18 +1538,30 @@
       // prefers-reduced-motion is meant to suppress, so keep cycling
       // either way — but for people who've asked for less motion, swap
       // instantly instead of animating the crossfade.
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        document.documentElement.style.setProperty('--bg-fade-duration', '0s');
-      }
-
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const FADE_MS = reduceMotion ? 0 : 2200;
       const HOLD_MS = 5000; // how long each background is shown before crossfading
       let index = 0;
 
-      setInterval(() => {
-        slides[index].classList.remove('active');
-        index = (index + 1) % slides.length;
-        slides[index].classList.add('active');
-      }, HOLD_MS);
+      function crossfade(nextIndex) {
+        const outgoing = slides[index];
+        const incoming = slides[nextIndex];
+
+        outgoing.animate(
+          [{ opacity: 1 }, { opacity: 0 }],
+          { duration: FADE_MS, easing: 'ease-in-out', fill: 'forwards' }
+        );
+        incoming.animate(
+          [{ opacity: 0 }, { opacity: 1 }],
+          { duration: FADE_MS, easing: 'ease-in-out', fill: 'forwards' }
+        );
+
+        outgoing.classList.remove('active');
+        incoming.classList.add('active');
+        index = nextIndex;
+      }
+
+      setInterval(() => crossfade((index + 1) % slides.length), HOLD_MS);
     })();
 
     // --- ambient background particles ---
