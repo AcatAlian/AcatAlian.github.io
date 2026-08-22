@@ -595,23 +595,25 @@
     font-weight: 700;
     letter-spacing: -0.02em;
     margin: 0 0 4px;
-    background: linear-gradient(100deg,
+    background: linear-gradient(90deg,
       #17c964 0%,
-      #17c964 40%,
-      #eafff3 50%,
-      #17c964 60%,
-      #17c964 100%);
-    background-size: 220% 100%;
-    background-position: 0 0;
+      #00f2fe 25%,
+      #4facfe 50%,
+      #eafff3 62%,
+      #17c964 78%,
+      #00f2fe 100%);
+    background-size: 280% 100%;
+    background-position: 0% 50%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    animation: nameShine 3.2s linear infinite;
+    filter: drop-shadow(0 0 12px var(--accent-glow));
+    animation: nameShine 4.5s linear infinite;
   }
 
   @keyframes nameShine {
-    to { background-position: -220% 0; }
+    to { background-position: 100% 50%; }
   }
 
   .aliases {
