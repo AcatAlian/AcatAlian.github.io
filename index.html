@@ -59,7 +59,7 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity 1.4s ease;
+    transition: opacity var(--bg-fade-duration, 1.4s) ease;
   }
 
   .bg-slide.active {
@@ -1522,9 +1522,16 @@
     (function () {
       const slides = document.querySelectorAll('.bg-slide');
       if (slides.length < 2) return;
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-      const HOLD_MS = 4000; // how long each gif is shown before crossfading
+      // A slow ambient backdrop change isn't the kind of motion
+      // prefers-reduced-motion is meant to suppress, so keep cycling
+      // either way — but for people who've asked for less motion, swap
+      // instantly instead of animating the crossfade.
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.style.setProperty('--bg-fade-duration', '0s');
+      }
+
+      const HOLD_MS = 4000; // how long each background is shown before crossfading
       let index = 0;
 
       setInterval(() => {
