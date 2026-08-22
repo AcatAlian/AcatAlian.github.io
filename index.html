@@ -726,7 +726,11 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    * { animation: none !important; transition: none !important; }
+    /* .bg-slide is exempted here on purpose — its own script already
+       handles reduced motion (instant swap via --bg-fade-duration), so
+       this blanket rule would otherwise silently override that with
+       !important and force the crossfade to ~0s regardless. */
+    *:not(.bg-slide) { animation: none !important; transition: none !important; }
   }
 </style>
 </head>
