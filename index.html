@@ -59,7 +59,13 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity var(--bg-fade-duration, 1.4s) ease;
+    transition: opacity var(--bg-fade-duration, 2.2s) ease-in-out;
+    /* Promotes each video to its own compositor layer so the browser
+       blends them smoothly instead of re-rasterizing on every frame —
+       without this, simultaneous video decode + opacity crossfade can
+       look choppy rather than a smooth dissolve. */
+    will-change: opacity;
+    transform: translateZ(0);
   }
 
   .bg-slide.active {
@@ -1531,7 +1537,7 @@
         document.documentElement.style.setProperty('--bg-fade-duration', '0s');
       }
 
-      const HOLD_MS = 4000; // how long each background is shown before crossfading
+      const HOLD_MS = 5000; // how long each background is shown before crossfading
       let index = 0;
 
       setInterval(() => {
