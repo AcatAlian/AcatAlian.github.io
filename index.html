@@ -45,32 +45,7 @@
     cursor: url('Normal.cur'), auto;
   }
 
-  /* ---------- ambient background (crossfading video slideshow) ---------- */
-  .bg-slideshow {
-    position: fixed;
-    inset: 0;
-    z-index: -3;
-  }
-
-  .bg-slide {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    /* No CSS transition here on purpose — the fade is driven by the
-       Web Animations API in JS instead, so it can't be silently zeroed
-       out by any CSS transition/animation rule (including the
-       reduced-motion reset below). */
-    will-change: opacity;
-    transform: translateZ(0);
-  }
-
-  .bg-slide.active {
-    opacity: 1;
-  }
-
+  /* ---------- ambient background ---------- */
   .bg-grid {
     position: fixed;
     inset: 0;
@@ -136,16 +111,13 @@
     to { transform: rotate(360deg); }
   }
 
-  /* ---------- audio control (top-left, like the reference) ---------- */
+  /* ---------- audio control (bottom-left cluster) ---------- */
   .audio-control {
-    position: fixed;
-    top: 24px;
-    left: 24px;
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    z-index: 10;
   }
 
   .speaker-btn {
@@ -165,10 +137,8 @@
   .speaker-btn svg { width: 16px; height: 16px; }
 
   .volume-slider {
-    writing-mode: vertical-lr;
-    direction: rtl;
-    width: 4px;
-    height: 90px;
+    width: 90px;
+    height: 4px;
     accent-color: var(--accent);
     background: transparent;
     cursor: url('Link.cur'), pointer;
@@ -177,7 +147,7 @@
   .audio-hint {
     position: absolute;
     top: 8px;
-    left: 48px;
+    left: 72px;
     font-size: 0.72rem;
     color: var(--text-muted);
     background: var(--card-bg);
@@ -194,16 +164,12 @@
     50% { opacity: 1; }
   }
 
-  /* ---------- like button (top-right, mirrors audio-control) ---------- */
+  /* ---------- like button (bottom-left cluster) ---------- */
   .like-control {
-    position: fixed;
-    top: 24px;
-    right: 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    z-index: 10;
   }
 
   .like-btn {
@@ -237,6 +203,36 @@
     letter-spacing: 0.02em;
   }
 
+  /* ---------- back button (top-left corner) ---------- */
+  .back-btn {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    z-index: 20;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: url('Link.cur'), pointer;
+    pointer-events: none;
+    transform: translateX(-80px) rotate(-180deg);
+    transition: transform .5s cubic-bezier(.22, 1, .36, 1), color .2s ease;
+  }
+  .back-btn.visible {
+    pointer-events: auto;
+    transform: translateX(0) rotate(0deg);
+  }
+  .back-btn svg { width: 30px; height: 30px; }
+  .back-btn:hover {
+    color: var(--accent);
+    transform: translateX(-2px);
+  }
+
   /* ---------- cursor trail ---------- */
   .cursor-trail-dot {
     position: fixed;
@@ -260,69 +256,81 @@
     position: relative;
     width: 100%;
     max-width: 440px;
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04);
-    padding-top: 62px;
+    background: transparent;
+    box-shadow: none;
+    padding-top: 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .avatar-wrap {
-    position: absolute;
-    top: -54px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 108px;
-    height: 108px;
-    border-radius: 50%;
-    padding: 4px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    animation: avatarPulse 3s ease-in-out infinite;
-  }
-
-  @keyframes avatarPulse {
-    0%, 100% { box-shadow: 0 0 18px var(--accent-glow); }
-    50% { box-shadow: 0 0 30px var(--accent-glow); }
-  }
-
-  .avatar {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    background: var(--card-bg-soft);
-  }
-
-  /* ---------- avatar status badge (own design, not a Discord copy) ---------- */
-  .avatar-status {
-    position: absolute;
-    bottom: 1px;
-    right: 1px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--card-bg);
+  /* ---------- role buttons ---------- */
+  .role-buttons {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 24px;
   }
 
-  .avatar-status::after {
-    content: "";
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: #80848e;
-    transition: background .3s, box-shadow .3s;
+  .role-btn {
+    padding: 12px 30px;
+    border-radius: 30px;
+    background: var(--card-bg-soft);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    cursor: url('Link.cur'), pointer;
+    transition: border-color .2s, box-shadow .2s, color .2s, transform .15s, opacity .4s ease;
   }
 
-  .avatar-status.online::after  { background: #23a55a; box-shadow: 0 0 7px #23a55a; }
-  .avatar-status.idle::after    { background: #f0b232; box-shadow: 0 0 7px #f0b232; }
-  .avatar-status.dnd::after     { background: #f23f43; box-shadow: 0 0 7px #f23f43; }
-  .avatar-status.offline::after { background: #80848e; }
+  .role-btn.reappearing {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .role-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 16px var(--accent-glow);
+    transform: translateY(-2px);
+  }
+
+  .role-btn.flying {
+    position: fixed;
+    margin: 0;
+    z-index: 50;
+    transition: top 1.1s cubic-bezier(.22, 1, .36, 1),
+                left 1.1s cubic-bezier(.22, 1, .36, 1),
+                transform 1.1s cubic-bezier(.22, 1, .36, 1);
+  }
+
+  .role-btn.landed {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--text-muted);
+    box-shadow: none;
+    opacity: 0.6;
+    transform: none;
+    font-size: 1.35rem;
+    cursor: url('Normal.cur'), default;
+    pointer-events: none;
+  }
+
+  .role-btn.popping {
+    transition: transform .15s ease;
+    transform: scale(1.08);
+  }
+
+  .role-btn.fading-out {
+    opacity: 0;
+    transform: scale(0.35);
+    pointer-events: none;
+    transition: opacity 1s ease, transform 1s ease;
+  }
 
   .view-counter {
     display: flex;
@@ -645,11 +653,19 @@
     margin: 0;
   }
 
-  /* ---------- local time (bottom-left, mirrors audio-control) ---------- */
-  .local-time {
+  /* ---------- bottom-left cluster (local time, audio control, like button) ---------- */
+  .bottom-cluster {
     position: fixed;
     bottom: 24px;
     left: 24px;
+    display: flex;
+    align-items: flex-end;
+    gap: 22px;
+    z-index: 10;
+  }
+
+  /* ---------- local time ---------- */
+  .local-time {
     display: flex;
     align-items: center;
     gap: 5px;
@@ -657,7 +673,6 @@
     font-size: 0.72rem;
     letter-spacing: 0.02em;
     white-space: nowrap;
-    z-index: 10;
   }
 
   .local-time svg {
@@ -722,130 +737,71 @@
     .card-body { padding: 22px 20px 6px; }
     .card-footer { width: calc(100% - 40px); }
     .name { font-size: 1.6rem; }
+    .back-btn { top: 16px; left: 16px; width: 40px; height: 40px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; }
+    /* These are direct responses to a click, not ambient motion —
+       keep them, just shorter and without the decorative transform. */
+    .role-btn.flying { transition: top .35s ease, left .35s ease !important; }
+    .role-btn.popping { transition: transform .15s ease !important; }
+    .role-btn.fading-out { transition: opacity .7s ease, transform .7s ease !important; }
+    .role-btn { transition: opacity .25s ease !important; }
+    .back-btn { transition: transform .3s ease !important; }
+    .back-btn.visible { transform: translateX(0) !important; }
   }
 </style>
 </head>
 <body>
 
-  <!-- CUSTOMIZE: list your mp4 clips here — add or remove <video class="bg-slide"> blocks freely, the script adapts automatically -->
-  <div class="bg-slideshow" id="bgSlideshow">
-    <video class="bg-slide active" autoplay muted loop playsinline><source src="background1.mp4" type="video/mp4"></video>
-    <video class="bg-slide" autoplay muted loop playsinline><source src="background2.mp4" type="video/mp4"></video>
-    <video class="bg-slide" autoplay muted loop playsinline><source src="background3.mp4" type="video/mp4"></video>
-    <video class="bg-slide" autoplay muted loop playsinline><source src="background4.mp4" type="video/mp4"></video>
-    <video class="bg-slide" autoplay muted loop playsinline><source src="background5.mp4" type="video/mp4"></video>
-  </div>
   <div class="bg-grid"></div>
   <div class="bg-glow"></div>
   <canvas class="bg-particles" id="bgParticles"></canvas>
   <div class="led-border"></div>
   <div class="egg-toast" id="siteToast">🥚 secret found!</div>
 
-  <div class="local-time" id="localTime" title="My local time">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-    <span id="localTimeText">--:--</span>
-    <!-- CUSTOMIZE: swap this label if you change the TIMEZONE constant in the script -->
-    <span class="local-time-zone">· Malaysia (GMT+8)</span>
+  <button type="button" class="back-btn" id="backBtn" aria-label="Go back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6l6 6" /></svg>
+  </button>
+
+  <div class="bottom-cluster">
+    <div class="local-time" id="localTime" title="My local time">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <span id="localTimeText">--:--</span>
+      <!-- CUSTOMIZE: swap this label if you change the TIMEZONE constant in the script -->
+      <span class="local-time-zone">· Malaysia (GMT+8)</span>
+    </div>
+
+    <!-- CUSTOMIZE: point this at your own track, or delete the whole .audio-control block and <audio> tag if you don't want music -->
+    <div class="audio-control">
+      <button class="speaker-btn" id="muteBtn" aria-label="Toggle sound">
+        <svg id="speakerIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+      </button>
+      <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="60" aria-label="Volume">
+      <div class="view-counter" title="Unique views">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span id="viewCount">···</span>
+      </div>
+      <span class="audio-hint" id="audioHint">tap for sound</span>
+    </div>
+
+    <div class="like-control">
+      <button class="like-btn" id="likeBtn" aria-label="Like this page" aria-pressed="false">
+        <svg id="heartIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6Z"></path></svg>
+      </button>
+      <span class="like-count" id="likeCount" title="Likes">···</span>
+    </div>
   </div>
 
-  <!-- CUSTOMIZE: point this at your own track, or delete the whole .audio-control block and <audio> tag if you don't want music -->
-  <div class="audio-control">
-    <button class="speaker-btn" id="muteBtn" aria-label="Toggle sound">
-      <svg id="speakerIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-    </button>
-    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="60" orient="vertical" aria-label="Volume">
-    <div class="view-counter" title="Unique views">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-      <span id="viewCount">···</span>
-    </div>
-    <span class="audio-hint" id="audioHint">tap for sound</span>
-  </div>
   <audio id="bgAudio" loop>
     <source src="song.mp3" type="audio/mpeg">
   </audio>
 
-  <div class="like-control">
-    <button class="like-btn" id="likeBtn" aria-label="Like this page" aria-pressed="false">
-      <svg id="heartIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6Z"></path></svg>
-    </button>
-    <span class="like-count" id="likeCount" title="Likes">···</span>
-  </div>
-
   <main class="card">
-    <div class="avatar-wrap">
-      <!-- CUSTOMIZE: swap for your own avatar image -->
-      <img class="avatar" src="avatar.png" alt="AcatAlian avatar">
-      <span class="avatar-status" id="avatarStatus" title="My Discord status"></span>
-    </div>
-
-    <canvas class="visualizer" id="visualizer"></canvas>
-    <!-- CUSTOMIZE: change to your actual track name / artist -->
-    <p class="now-playing" id="nowPlaying">♪ Theme (Donkey Kong Country) — David Wise</p>
-
-    <div class="card-body">
-      <div class="card-scroll">
-
-        <section id="panel-home">
-          <!-- CUSTOMIZE: name, aliases -->
-          <h1 class="name">Acat</h1>
-          <p class="aliases"><span class="alias-word">Fizi</span> / <span class="alias-word">Acat</span> / <span class="alias-word">Alian</span></p>
-
-          <div class="id-row">
-            <button type="button" class="copy-chip" id="copyDiscord" title="Copy Discord username">
-              Discord · <kbd id="discordTag">fizi.acat</kbd>
-            </button>
-            <button type="button" class="copy-chip" id="copyRoblox" title="Copy Roblox username">
-              Roblox · <kbd id="robloxUser">Mybusises</kbd>
-            </button>
-          </div>
-
-          <div class="discord-status" id="discordStatus">
-            <span class="status-dot" id="statusDot"></span>
-            <span id="statusText">Loading status…</span>
-          </div>
-          <div class="spotify-status" id="spotifyStatus">
-            <img id="spotifyArt" src="" alt="">
-            <div class="spotify-info">
-              <span class="spotify-song" id="spotifySong"></span>
-              <span class="spotify-artist" id="spotifyArtist"></span>
-            </div>
-          </div>
-          <div class="activity-status" id="activityStatus">
-            <img id="activityArt" src="" alt="">
-            <div class="activity-info">
-              <span class="activity-name" id="activityName"></span>
-              <span class="activity-detail" id="activityDetail"></span>
-            </div>
-          </div>
-          <div class="activity-status" id="robloxStatus">
-            <img id="robloxArt" src="" alt="">
-            <div class="activity-info">
-              <span class="activity-name" id="robloxName"></span>
-              <span class="activity-detail" id="robloxDetail"></span>
-            </div>
-          </div>
-        </section>
-
-      </div>
-    </div>
-
-    <!-- CUSTOMIZE: hrefs + point each img at your own logo PNG -->
-    <div class="card-footer">
-      <div class="icon-row">
-        <a class="icon-btn" href="https://www.youtube.com/channel/UChpTAFQFubLEuwPTyfSssqA" target="_blank" rel="noopener" title="YouTube">
-          <img src="youtube.png" alt="YouTube">
-        </a>
-        <a class="icon-btn" href="https://discord.gg/Cjc5QGhbFu" target="_blank" rel="noopener" title="Discord">
-          <img src="discord.png" alt="Discord" class="icon-discord">
-        </a>
-        <a class="icon-btn" href="https://www.roblox.com/users/1824718468/profile" target="_blank" rel="noopener" title="Roblox">
-          <img src="roblox.png" alt="Roblox">
-        </a>
-      </div>
+    <div class="role-buttons">
+      <button type="button" class="role-btn" id="modBtn">Moderator</button>
+      <button type="button" class="role-btn" id="testerBtn">Tester</button>
     </div>
   </main>
 
@@ -1519,51 +1475,6 @@
       window.setFaviconStatus = draw;
     })();
 
-    // --- background video crossfade slideshow ---
-    // Holds each clip fully visible for HOLD_MS, then crossfades to the
-    // next. All clips stay in the DOM the whole time (just at opacity 0)
-    // rather than being swapped in/out, so playback keeps looping
-    // continuously instead of restarting from frame one every cycle.
-    //
-    // The fade itself runs through .animate() (Web Animations API)
-    // rather than a CSS transition. WAAPI isn't governed by the CSS
-    // `transition`/`animation` properties at all, so it can't be zeroed
-    // out by a stray `transition: none !important` rule the way a CSS
-    // transition can — it just always runs the duration given here.
-    (function () {
-      const slides = document.querySelectorAll('.bg-slide');
-      if (slides.length < 2) return;
-
-      // A slow ambient backdrop change isn't the kind of motion
-      // prefers-reduced-motion is meant to suppress, so keep cycling
-      // either way — but for people who've asked for less motion, swap
-      // instantly instead of animating the crossfade.
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const FADE_MS = reduceMotion ? 0 : 2200;
-      const HOLD_MS = 5000; // how long each background is shown before crossfading
-      let index = 0;
-
-      function crossfade(nextIndex) {
-        const outgoing = slides[index];
-        const incoming = slides[nextIndex];
-
-        outgoing.animate(
-          [{ opacity: 1 }, { opacity: 0 }],
-          { duration: FADE_MS, easing: 'ease-in-out', fill: 'forwards' }
-        );
-        incoming.animate(
-          [{ opacity: 0 }, { opacity: 1 }],
-          { duration: FADE_MS, easing: 'ease-in-out', fill: 'forwards' }
-        );
-
-        outgoing.classList.remove('active');
-        incoming.classList.add('active');
-        index = nextIndex;
-      }
-
-      setInterval(() => crossfade((index + 1) % slides.length), HOLD_MS);
-    })();
-
     // --- ambient background particles ---
     (function () {
       const canvas = document.getElementById('bgParticles');
@@ -1627,6 +1538,134 @@
       document.addEventListener('visibilitychange', () => {
         document.title = document.hidden ? AWAY_TITLE : ORIGINAL_TITLE;
       });
+    })();
+
+    // --- Role buttons: whichever is clicked flies to the top-left corner
+    // and locks; the other pops, shrinks, and fades away ---
+    // Uses a FLIP-style transition: lock the button's current on-screen
+    // spot as a fixed-position element first (no visual jump), wait two
+    // animation frames so the browser actually paints that starting
+    // position, then change top/left to the corner target so it glides
+    // there instead of snapping. Once it lands, the button is disabled
+    // for good.
+    (function () {
+      const modBtn = document.getElementById('modBtn');
+      const testerBtn = document.getElementById('testerBtn');
+      const backBtn = document.getElementById('backBtn');
+      if (!modBtn || !testerBtn) return;
+
+      const CORNER_TOP = '24px';
+      const CORNER_LEFT = '96px';
+
+      // Undoes a role choice: strips every inline style and state class the
+      // fly/pop/fade animation added, so both buttons go back to their
+      // original flex-centered look and can be picked again — then fades
+      // them in rather than letting them snap straight to full opacity.
+      function fullReset() {
+        [modBtn, testerBtn].forEach(btn => {
+          btn.removeAttribute('style');
+          btn.classList.remove('flying', 'landed', 'popping', 'fading-out');
+          btn.disabled = false;
+          btn.removeAttribute('aria-disabled');
+          btn.classList.add('reappearing'); // starts invisible; removed below
+        });
+
+        // Same two-rAF trick used for the corner fly-in: without it, the
+        // 'reappearing' class add and its removal happen in the same tick
+        // and the browser coalesces them into a single frame, skipping the
+        // fade entirely.
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            modBtn.classList.remove('reappearing');
+            testerBtn.classList.remove('reappearing');
+          });
+        });
+      }
+
+      function resetRoles() {
+        if (backBtn) backBtn.classList.remove('visible');
+
+        // The landed button is the disabled one still parked in the corner —
+        // fade it out in place instead of yanking its styles off instantly,
+        // which used to make it vanish mid-frame. The other button is
+        // already invisible (display: none) from when it originally faded
+        // away, so it has nothing to animate; it can reset immediately.
+        const landedBtn = [modBtn, testerBtn].find(btn => btn.classList.contains('landed'));
+
+        if (!landedBtn) {
+          fullReset();
+          return;
+        }
+
+        landedBtn.disabled = true; // stay non-interactive during the fade
+        landedBtn.classList.add('fading-out');
+        landedBtn.addEventListener('transitionend', function onFade(e) {
+          if (e.propertyName !== 'opacity') return;
+          landedBtn.removeEventListener('transitionend', onFade);
+          fullReset();
+        });
+      }
+
+      if (backBtn) backBtn.addEventListener('click', resetRoles);
+
+      function handleClick(chosenBtn, otherBtn) {
+        if (chosenBtn.classList.contains('flying') || chosenBtn.disabled) return;
+
+        if (backBtn) backBtn.classList.add('visible');
+
+        // Capture both rects before either button leaves the flex flow,
+        // so removing chosenBtn doesn't re-center/shift otherBtn.
+        const chosenRect = chosenBtn.getBoundingClientRect();
+        const otherRect = otherBtn.getBoundingClientRect();
+
+        if (!otherBtn.classList.contains('fading-out')) {
+          otherBtn.style.position = 'fixed';
+          otherBtn.style.margin = '0';
+          otherBtn.style.top = otherRect.top + 'px';
+          otherBtn.style.left = otherRect.left + 'px';
+          otherBtn.style.width = otherRect.width + 'px';
+          otherBtn.style.zIndex = '50';
+
+          otherBtn.classList.add('popping');
+          setTimeout(() => {
+            otherBtn.classList.remove('popping');
+            otherBtn.classList.add('fading-out');
+            otherBtn.addEventListener('transitionend', function onFade(e) {
+              if (e.propertyName !== 'opacity') return;
+              otherBtn.style.display = 'none';
+              otherBtn.removeEventListener('transitionend', onFade);
+            });
+          }, 150);
+        }
+
+        chosenBtn.style.width = chosenRect.width + 'px';
+        chosenBtn.style.top = chosenRect.top + 'px';
+        chosenBtn.style.left = chosenRect.left + 'px';
+        chosenBtn.classList.add('flying');
+
+        // Two nested rAFs guarantee a real paint of the starting position
+        // happens before the target values are applied — a single forced
+        // reflow can still get coalesced away in some browsers, which is
+        // what made this look like an instant jump instead of a glide.
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            chosenBtn.style.top = CORNER_TOP;
+            chosenBtn.style.left = CORNER_LEFT;
+          });
+        });
+
+        chosenBtn.addEventListener('transitionend', function onLanded(e) {
+          if (e.propertyName !== 'top') return;
+          chosenBtn.classList.add('landed');
+          chosenBtn.style.width = 'auto'; // pill chrome is gone now, let text size the box
+          chosenBtn.disabled = true;
+          chosenBtn.setAttribute('aria-disabled', 'true');
+          chosenBtn.removeEventListener('transitionend', onLanded);
+        });
+      }
+
+      modBtn.addEventListener('click', () => handleClick(modBtn, testerBtn));
+      testerBtn.addEventListener('click', () => handleClick(testerBtn, modBtn));
     })();
   </script>
 
